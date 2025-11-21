@@ -1,8 +1,17 @@
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+.history/
+*.vsix
+.history
+.ionide
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-
 .build/
 develop-eggs/
 dist/
@@ -18,7 +27,6 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-
 venv/
 .env/
 .venv/
