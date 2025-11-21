@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>블로그 프로젝트</title>
+</head>
+<body>
+{% block content %}
+    <nav>
+        <div>
+            {% if request.user.is_authenticated %}
+            {{ request.user.username }}
+                <form action="{%  url 'logout' %}" method="POST" class="d-inline">
+                    {% csrf_token %}
+                    <button>로그아웃</button>
+                </form>
+            {% else %}
+                <a href="{% url 'signup' %}">회원가입</a>
+                <a href="{% url 'login' %}">로그인</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    	
+    {% endblock %}
+</body>
+</html>
