@@ -48,6 +48,18 @@ class TransactionListCreateView(ListCreateAPIView):
             balance_after=new_balance
         )
 
+def recalc_account_transactions(account):
+    transactions = account.transactions.order_by('transaction_at', 'id')
+
+    balance = 0
+    for tx in transactions:
+        if tx.type == "INCOME":
+            balance += tx.amount
+        else:
+            balance -= tx.amount
+
+        tx.balance_after = balance
+        tx.save()
 
 class TransactionDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = TransactionSerializer
@@ -55,3 +67,19 @@ class TransactionDetailView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Transaction.objects.filter(user=self.request.user)
+
+    # 거래 삭제 후 전체 재계산
+    def perform_destroy(self, instance):
+        account = instance.account
+        instance.delete()
+
+        recalc_account_transactions(account)
+
+    # 거래 수정 후 전체 재계산
+    def perform_update(self, serializer):
+        instance = self.get_object()
+        account = instance.account
+
+        serializer.save()
+
+        recalc_account_transactions(account)
