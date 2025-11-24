@@ -28,13 +28,10 @@ class Transaction(models.Model):
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     memo = models.CharField(max_length=255, blank=True)
 
-    transaction_at = models.DateField()
+    transaction_at = models.DateField()   # ERD 기준 필드명
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["-transaction_at"]
-
-    def __str__(self):
-        return f"{self.account.name} / {self.amount}원 / {self.balance_after}원"
+        ordering = ['-transaction_at']

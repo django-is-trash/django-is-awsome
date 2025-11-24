@@ -21,27 +21,32 @@ class TransactionListCreateView(ListCreateAPIView):
         return Transaction.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        account = serializer.validated_data["account"]
+        account = serializer.validated_data['account']
 
         if account.user != self.request.user:
             raise PermissionDenied("이 계좌에 거래를 생성할 수 없습니다.")
 
-        amount = serializer.validated_data["amount"]
-        type = serializer.validated_data["type"]
+        # 계좌의 최신 balance_after = 최근 거래 balance_after
+        last_transaction = (
+            account.transactions.order_by('-transaction_at', '-id').first()
+        )
 
-        # balance 계산
-        if type == "INCOME":
-            new_balance = account.balance + amount
+        last_balance = last_transaction.balance_after if last_transaction else 0
+
+        amount = serializer.validated_data['amount']
+        type = serializer.validated_data['type']
+
+        # 새 잔액 계산
+        if type == 'INCOME':
+            new_balance = last_balance + amount
         else:
-            new_balance = account.balance - amount
+            new_balance = last_balance - amount
 
-        transaction = serializer.save(
+        # 저장
+        serializer.save(
             user=self.request.user,
             balance_after=new_balance
         )
-
-        account.balance = new_balance
-        account.save()
 
 
 class TransactionDetailView(RetrieveUpdateDestroyAPIView):
