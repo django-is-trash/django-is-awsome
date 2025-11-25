@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>간편 가계부</title>
+    <style>
+        body { padding: 30px; font-family: sans-serif; }
+        .container { display: flex; gap: 30px; }
+        .box { border: 1px solid #ddd; padding: 20px; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
+        button { cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>💰 나의 거래 내역 ({{ user.username }})</h2>
+
+    <div style="margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 5px;">
+        <form method="GET">
+            <label>검색: </label>
+            <select name="type">
+                <option value="">모두 보기</option>
+                <option value="INCOME">수입</option>
+                <option value="EXPENSE">지출</option>
+            </select>
+            <input type="text" name="q" placeholder="내용 검색...">
+            <button type="submit">조회</button>
+            <a href="/">[초기화]</a>
+        </form>
+    </div>
+
+    <div class="container">
+        <div class="box" style="flex: 1;">
+            <h3>📝 내역 추가</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" style="width: 100%; padding: 10px; background: black; color: white; border: none;">저장하기</button>
+            </form>
+        </div>
+
+        <div class="box" style="flex: 2;">
+            <h3>📋 목록</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>날짜</th>
+                        <th>구분</th>
+                        <th>분류</th>
+                        <th>내용</th>
+                        <th>금액</th>
+                        <th>관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transactions %}
+                    <tr>
+                        <td>{{ t.transaction_at|date:"Y-m-d" }}</td>
+                        <td style="color: {% if t.type == 'INCOME' %}blue{% else %}red{% endif %}">
+                            {{ t.get_type_display }}
+                        </td>
+                        <td>{{ t.category }}</td>
+                        <td>{{ t.memo }}</td>
+                        <td>{{ t.amount }}원</td>
+                        <td>
+                            <form action="{% url 'transaction_delete' t.pk %}" method="POST" style="margin:0;">
+                                {% csrf_token %}
+                                <button type="submit" onclick="return confirm('정말 삭제할까요?')">삭제</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" style="text-align:center; color:gray;">데이터가 없습니다.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
