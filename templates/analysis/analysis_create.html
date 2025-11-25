@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>🆕 분석 생성</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <!-- 그래프 종류 선택 -->
+    <label class="form-label fw-bold">그래프 종류</label>
+    <select name="graph_type" class="form-select w-auto mb-3">
+        <option value="TOTAL">수입 vs 지출</option>
+        <option value="CATEGORY">카테고리별 지출</option>
+    </select>
+
+    <!-- 분석 기간 버튼들 -->
+    <button name="type" value="DAILY" class="btn btn-primary">오늘</button>
+    <button name="type" value="LAST_DAY" class="btn btn-outline-primary">어제</button>
+
+    <button name="type" value="WEEKLY" class="btn btn-primary">이번주</button>
+    <button name="type" value="LAST_WEEK" class="btn btn-outline-primary">지난주</button>
+
+    <button name="type" value="MONTHLY" class="btn btn-primary">이번달</button>
+    <button name="type" value="LAST_MONTH" class="btn btn-outline-primary">지난달</button>
+
+    <button name="type" value="YEARLY" class="btn btn-primary">올해</button>
+    <button name="type" value="LAST_YEAR" class="btn btn-outline-primary">작년</button>
+</form>
+
+{% if result %}
+    <div class="alert alert-success mt-4">분석 생성 완료!</div>
+    <p><strong>기간:</strong> {{ result.period_start }} ~ {{ result.period_end }}</p>
+
+    {% if result.result_image %}
+        <img src="{{ result.result_image.url }}" width="400">
+    {% endif %}
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,10 @@
+<script>
+  document.querySelectorAll('select, input, textarea').forEach(function (ele) {
+    // 라디오/체크박스는 form-control 말고 따로 처리 > 입금출금 누르는 라디오가 망가져서 추가함
+    if (ele.type === 'radio' || ele.type === 'checkbox') {
+      ele.classList.add('form-check-input');
+    } else {
+      ele.classList.add('form-control');
+    }
+  });
+</script>
