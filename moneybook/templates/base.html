@@ -1,27 +1,76 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>블로그 프로젝트</title>
+    <title>가계부 프로젝트</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
 </head>
 <body>
-{% block content %}
-    <nav>
-        <div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid d-flex align-items-center">
+
+        <!-- 로고  -->
+        <a class="navbar-brand fw-bold order-0" href="{% url 'home' %}">
+            Moneybook
+        </a>
+
+        <!-- 로그인/로그아웃 / 회원가입  -->
+        <div class="d-flex align-items-center ms-auto order-1 order-lg-2">
             {% if request.user.is_authenticated %}
-            {{ request.user.username }}
-                <form action="{%  url 'logout' %}" method="POST" class="d-inline">
+                <span class="navbar-text text-white me-3">
+                    {{ request.user.username }} 님
+                </span>
+                <form action="{% url 'logout' %}" method="POST" class="d-inline">
                     {% csrf_token %}
-                    <button>로그아웃</button>
+                    <button class="btn btn-outline-light btn-sm">로그아웃</button>
                 </form>
             {% else %}
-                <a href="{% url 'signup' %}">회원가입</a>
-                <a href="{% url 'login' %}">로그인</a>
+                <a class="btn btn-outline-light btn-sm me-2" href="{% url 'signup' %}">회원가입</a>
+                <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">로그인</a>
             {% endif %}
         </div>
-    </nav>
 
-    	
+        <!-- 햄버거 버튼 넓은화면에서만 보임 (반응형) -->
+        <button class="navbar-toggler d-lg-none ms-2 order-2"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- 메뉴 (가계부 / 계좌 / 프로필) -->
+        <div class="collapse navbar-collapse order-3 order-lg-1 ms-lg-3 me-lg-auto mt-2 mt-lg-0"
+             id="navbarContent">
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}"
+                       href="{% url 'home' %}">가계부</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:account_list' %}">계좌</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:profile' %}">프로필</a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+
+
+<div class="container mt-4">
+    {% block content %}
     {% endblock %}
+</div>
+
+<script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+{% block js %}  {% endblock %}
+
+
 </body>
 </html>
