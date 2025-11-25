@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-center mb-4">계좌 등록</h1>
+
+<form method="post">
+  {% csrf_token %}
+
+  <p>
+    <label>은행</label><br>
+    {{ form.bank_code }}
+  </p>
+
+  <p>
+    <label>계좌번호</label><br>
+    {{ form.account_number }}
+  </p>
+
+  <p>
+    <label>계좌 종류</label><br>
+    {{ form.account_type }}
+  </p>
+
+    <p>
+    <label>계좌 별명</label><br>
+    {{ form.name }}
+  </p>
+
+    <div class="d-flex justify-content-between">
+      <a href="{% url 'accounts:account_list' %}" class="btn btn-outline-secondary">← 목록으로</a>
+      <button type="submit" class="btn btn-outline-primary">저장</button>
+    </div>
+</form>
+
+
+{% endblock %}
+{% block js %}
+    {% include 'form-js.html' %}
+{% endblock %}

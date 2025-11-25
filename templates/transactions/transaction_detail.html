@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+
+{% block content %}
+
+<h2 class="text-center fw-bold mb-4">가계부 상세</h2>
+
+<div class="mt-4 mb-4">
+  <p><strong>계좌</strong> : {{ transaction.account }}</p>
+
+  <p><strong>거래 일시</strong> : {{ transaction.transacted_at|date:"Y-m-d H:i" }}</p>
+
+  <p><strong>카테고리</strong> : {{ transaction.get_category_display }}</p>
+
+  <p><strong>입/출금</strong> : {{ transaction.get_type_display }}</p>
+
+  <p>
+    <strong>금액</strong> :
+    {% if transaction.type == "withdraw" %}
+      <span class="text-danger fw-bold">-{{ transaction.amount|intcomma }}원</span>
+    {% else %}
+      <span class="text-primary fw-bold">+{{ transaction.amount|intcomma }}원</span>
+    {% endif %}
+  </p>
+
+  <p><strong>메모</strong> : {{ transaction.memo|default:"(메모 없음)" }}</p>
+
+  <hr>
+    <div class="d-flex flex-column align-items-end">
+        <p class="text-muted small mb-1">생성 : {{ transaction.created_at|date:"Y-m-d H:i" }}</p>
+        <p class="text-muted small">수정 : {{ transaction.updated_at|date:"Y-m-d H:i" }}</p>
+    </div>
+ </div>
+
+
+<div class="d-flex justify-content-between align-items-center mt-4">
+
+  <a href="{% url 'transactions:transaction_html' %}" class="btn btn-outline-secondary">
+    ← 목록으로
+  </a>
+
+  <div class="d-flex gap-2">
+    <a href="{% url 'transactions:transaction_update' transaction.id %}" class="btn btn-outline-primary">
+      수정
+    </a>
+
+    <form action="{% url 'transactions:transaction_delete_html' transaction.id %}" method="post"
+          onsubmit="return confirm('정말 삭제하시겠습니까?');">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-outline-danger">삭제</button>
+
+    </form>
+  </div>
+
+</div>
+
+{% endblock %}
