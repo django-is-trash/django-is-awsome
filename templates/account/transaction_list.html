@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>My Money Log</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body class="container py-5">
+
+    <h2 class="mb-4 fw-bold"> {{ user.username }}님의 가계부</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white p-3">
+                <h5>현재 잔액</h5>
+                <h3 class="fw-bold">{{ balance }}원</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white p-3">
+                <h5>총 수입</h5>
+                <h3 class="fw-bold">+{{ total_income }}원</h3>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-danger text-white p-3">
+                <h5>총 지출</h5>
+                <h3 class="fw-bold">-{{ total_expense }}원</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card p-4">
+                <h4 class="mb-3">내역 추가</h4>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">날짜</label>
+                        {{ form.transaction_at }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">구분</label>
+                        {{ form.type }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">카테고리</label>
+                        {{ form.category }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">금액</label>
+                        {{ form.amount }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">메모</label>
+                        {{ form.memo }}
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100 py-2">저장하기</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card p-4">
+                <form method="GET" class="row g-2 mb-4">
+                    <div class="col-3">
+                        <select name="search_type" class="form-select">
+                            <option value="">전체</option>
+                            <option value="INCOME" {% if request.GET.search_type == 'INCOME' %}selected{% endif %}>수입</option>
+                            <option value="EXPENSE" {% if request.GET.search_type == 'EXPENSE' %}selected{% endif %}>지출</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <input type="text" name="search_query" class="form-control" placeholder="메모 검색..." value="{{ request.GET.search_query|default:'' }}">
+                    </div>
+                    <div class="col-3">
+                        <button type="submit" class="btn btn-secondary w-100">검색</button>
+                    </div>
+                </form>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>날짜</th>
+                                <th>구분</th>
+                                <th>카테고리</th>
+                                <th>메모</th>
+                                <th class="text-end">금액</th>
+                                <th class="text-center">삭제</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in transactions %}
+                            <tr>
+                                <td>{{ t.transaction_at|date:"Y-m-d" }}</td>
+                                <td>
+                                    {% if t.type == 'INCOME' %}
+                                        <span class="badge bg-success bg-opacity-75">수입</span>
+                                    {% else %}
+                                        <span class="badge bg-danger bg-opacity-75">지출</span>
+                                    {% endif %}
+                                </td>
+                                <td><span class="text-muted small">{{ t.category }}</span></td>
+                                <td class="fw-bold">{{ t.memo }}</td>
+                                <td class="text-end">
+                                    {% if t.type == 'INCOME' %}
+                                        <span class="text-success">+{{ t.amount }}</span>
+                                    {% else %}
+                                        <span class="text-danger">-{{ t.amount }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <form action="{% url 'transaction_delete' t.pk %}" method="POST" onsubmit="return confirm('삭제하시겠습니까?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">X</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">등록된 내역이 없습니다.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
