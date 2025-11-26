@@ -45,14 +45,14 @@ def transaction_list(request):
         'balance': balance,
     }
 
-    # [중요] 템플릿 경로 수정됨: 'account/' 폴더 안의 파일을 찾음
-    return render(request, 'account/transaction_list.html', context)
+
+    return render(request, 'transactions/transaction_list.html', context)
 
 @login_required
 def transaction_delete(request, pk):
-    # [4] 삭제 로직 (처리 후 메인으로 복귀)
+
     if request.method == 'POST':
-        # 내 데이터인지 확인(보안) 후 삭제
+
         transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
         transaction.delete()
     return redirect('transaction_list')
