@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from .models import Transaction
 from .forms import TransactionForm
-#pk일때수정그외 기본으로수정불가함으로만듬
+
 @login_required(login_url='/admin/login/')
 def transaction_list(request, pk=None):
 

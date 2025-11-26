@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "transactions",
-    #수정함
+    #수정함이제콤마생김
+    "django.contrib.humanize",
 ]
 
 MIDDLEWARE = [

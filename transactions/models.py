@@ -2,14 +2,15 @@ from django.db import models
 from django.conf import settings
 
 class Transaction(models.Model):
-
     TYPE_CHOICES = [
         ('INCOME', '수입'),
         ('EXPENSE', '지출'),
     ]
 
 
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
 
 
     transaction_at = models.DateField(verbose_name="거래일")
@@ -19,12 +20,12 @@ class Transaction(models.Model):
     memo = models.CharField(max_length=100, blank=True, verbose_name="메모")
 
 
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
-
     class Meta:
-        ordering = ['-transaction_at']
+        ordering = ['-transaction_at'] # 최신순 정렬
+
     def __str__(self):
         return f"{self.memo} ({self.amount})"
