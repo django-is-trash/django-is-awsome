@@ -55,6 +55,13 @@ def transaction_list(request, pk=None):
 
     return render(request, 'transactions/transaction_list.html', context)
 
+
+# [2] 상세 페이지 뷰
+@login_required
+def transaction_detail(request, pk):
+    transaction = get_object_or_404(Transaction, pk=pk, user=request.user)
+    return render(request, 'transactions/transaction_detail.html', {'transaction': transaction})
+
 @login_required
 def transaction_delete(request, pk):
     if request.method == 'POST':

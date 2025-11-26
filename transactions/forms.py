@@ -8,7 +8,7 @@ class TransactionForm(forms.ModelForm):
         widgets = {
             'transaction_at': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'type': forms.Select(attrs={'class': 'form-select'}),
-            'category': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '예: 식비, 월급'}),
+            'category': forms.Select(attrs={'class': 'form-select'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '숫자만 입력'}),
             'memo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '내용 입력'}),
         }
