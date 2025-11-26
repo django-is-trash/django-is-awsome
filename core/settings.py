@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "transactions",#수정함
+    "transactions",
+    #수정함
 ]
 
 MIDDLEWARE = [
@@ -108,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = "ko-kr"
 
 # [수정됨] 한국 시간대로 다시바꿈
-TIME_ZONE = "U Asia/Seoul"
+TIME_ZONE = "Asia/Seoul"
 
 USE_I18N = True
 
