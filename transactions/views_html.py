@@ -7,9 +7,26 @@ from .forms import TransactionForm
 
 @login_required
 def transaction_html_view(request):
-    transactions = Transaction.objects.filter(user=request.user).order_by("-created_at")
+    qs = Transaction.objects.filter(user=request.user)
+
+    # 카테고리 필터
+    category = request.GET.get("category")
+    if category:
+        qs = qs.filter(category=category)
+
+    # 기간 필터
+    start = request.GET.get("start")
+    end = request.GET.get("end")
+
+    if start:
+        qs = qs.filter(transacted_at__date__gte=start)
+    if end:
+        qs = qs.filter(transacted_at__date__lte=end)
+
+    qs = qs.order_by('-created_at')
+
     return render(request, "transactions/transaction_list.html", {
-        "transactions": transactions,
+        "transactions": qs,
     })
 
 @login_required

@@ -3,57 +3,89 @@
 
 {% block content %}
 
-<div class="row justify-content-center">
-  <div class="col-12 col-lg-8">
+<div class="container">
 
-    <!-- 상단 타이틀 / 버튼 -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2 class="mb-0">{{ request.user.username }} 님의 가계부</h2>
-      <a href="{% url 'transactions:transaction_create' %}" class="btn btn-dark btn-sm">
-        + 새 거래
-      </a>
+  <h2 class="mb-4">{{ request.user.username }} 님의 대시보드</h2>
+
+  <div class="row g-4">
+
+    <!-- 이번달 통계 -->
+    <div class="col-12 col-lg-4">
+      <div class="card shadow-sm p-3">
+
+        <h5 class="fw-bold mb-3">📊 이번달 요약</h5>
+
+        <p class="mb-1">총 수입:
+          <strong class="text-primary">{{ month_income|intcomma }}</strong> 원
+        </p>
+
+        <p class="mb-1">총 지출:
+          <strong class="text-danger">{{ month_spending|intcomma }}</strong> 원
+        </p>
+
+        <p class="mb-3">
+          차액:
+          <strong class="{% if month_diff < 0 %}text-danger{% else %}text-success{% endif %}">
+            {{ month_diff|intcomma }}
+          </strong> 원
+        </p>
+
+        <a href="{% url 'analysis:analysis_create_html' %}" class="btn btn-dark btn-sm w-100">
+          🔍 이번달 분석하기
+        </a>
+
+      </div>
     </div>
 
-    <!-- 메인에서 보여줄  -->
-    {% comment %} 최근 거래 목록 {% endcomment %}
-    {% if recent_transactions %}
-      <ul class="list-group">
-        {% for t in recent_transactions %}
-          <li class="list-group-item border-0 border-bottom py-2 px-0">
-            <a href="{% url 'transactions:transaction_detail' t.id %}"
-               class="d-block text-decoration-none text-body">
+    <!-- 오른쪽: 최근 거래 -->
+    <div class="col-12 col-lg-8">
 
-              <div class="d-flex justify-content-between">
-                <div class="fw-semibold">
-                  {{ t.get_category_display }}
-                  {% if t.memo %} · {{ t.memo }}{% endif %}
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">📝 최근 거래</h5>
+        <a href="{% url 'transactions:transaction_create' %}" class="btn btn-dark btn-sm">+ 새 거래</a>
+      </div>
+
+      {% if recent_transactions %}
+        <ul class="list-group">
+          {% for t in recent_transactions %}
+            <li class="list-group-item border-0 border-bottom py-2 px-0">
+              <a href="{% url 'transactions:transaction_detail' t.id %}"
+                 class="d-block text-decoration-none text-body">
+
+                <div class="d-flex justify-content-between">
+                  <div class="fw-semibold">
+                    {{ t.get_category_display }}
+                    {% if t.memo %} · {{ t.memo }}{% endif %}
+                  </div>
+                  <div class="fw-bold {% if t.type == 'withdraw' %}text-danger{% else %}text-primary{% endif %}">
+                    {% if t.type == "withdraw" %}-{% else %}+{% endif %}
+                    {{ t.amount|intcomma }}원
+                  </div>
                 </div>
-                <div class="fw-bold {% if t.type == 'withdraw' %}text-danger{% else %}text-primary{% endif %}">
-                  {% if t.type == "withdraw" %}-{% else %}+{% endif %}
-                  {{ t.amount|intcomma }}원
+
+                <div class="text-muted small d-flex justify-content-between mt-1">
+                  <span>{{ t.transacted_at|date:"Y-m-d H:i" }}</span>
+                  <span>{{ t.account.nickname|default:t.account }}</span>
                 </div>
-              </div>
 
-              <div class="text-muted small d-flex justify-content-between mt-1">
-                <span>{{ t.transacted_at|date:"Y-m-d H:i" }}</span>
-                <span>{{ t.account.nickname|default:t.account }}</span>
-              </div>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted">최근 거래가 없습니다.</p>
+      {% endif %}
 
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p class="text-muted">최근 거래가 없습니다.</p>
-    {% endif %}
+      <div class="text-center mt-3">
+        <a href="{% url 'transactions:transaction_html' %}" class="btn btn-outline-secondary btn-sm">
+          전체 거래 보기
+        </a>
+      </div>
 
-    <div class="text-center mt-3">
-      <a href="{% url 'transactions:transaction_html' %}" class="btn btn-outline-secondary btn-sm">
-        전체 거래 보기
-      </a>
     </div>
 
   </div>
+
 </div>
 
 {% endblock %}

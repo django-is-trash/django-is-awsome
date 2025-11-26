@@ -1,8 +1,53 @@
 {% extends "base.html" %}
 {% load humanize %}
 
-
 {% block content %}
+
+<!-- 필터기능 추가 -->
+<div class="card shadow-sm p-3 mb-4">
+  <form method="GET" class="row g-3">
+
+    <!-- 카테고리 -->
+    <div class="col-md-3">
+      <label class="form-label fw-semibold">카테고리</label>
+      <select name="category" class="form-select">
+        <option value="">전체</option>
+        <option value="food" {% if request.GET.category == "food" %}selected{% endif %}>식비</option>
+        <option value="transport" {% if request.GET.category == "transport" %}selected{% endif %}>교통</option>
+        <option value="shopping" {% if request.GET.category == "shopping" %}selected{% endif %}>쇼핑</option>
+        <option value="income" {% if request.GET.category == "income" %}selected{% endif %}>수입</option>
+        <option value="etc" {% if request.GET.category == "etc" %}selected{% endif %}>기타</option>
+      </select>
+    </div>
+
+    <!-- 시작 날짜 -->
+    <div class="col-md-3">
+      <label class="form-label fw-semibold">시작 날짜</label>
+      <input type="date"
+             name="start"
+             class="form-control"
+             value="{{ request.GET.start }}">
+    </div>
+
+    <!-- 종료 날짜 -->
+    <div class="col-md-3">
+      <label class="form-label fw-semibold">종료 날짜</label>
+      <input type="date"
+             name="end"
+             class="form-control"
+             value="{{ request.GET.end }}">
+    </div>
+
+    <!-- 버튼 -->
+    <div class="col-md-3 d-flex align-items-end">
+      <button class="btn btn-dark w-100 py-2">
+        🔍 필터 적용
+      </button>
+    </div>
+
+  </form>
+</div>
+
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">{{ request.user.username }} 님의 가계부</h2>
     <a href="{% url 'transactions:transaction_create' %}" class="btn btn-dark btn-sm">

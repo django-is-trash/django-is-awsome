@@ -58,6 +58,7 @@ def analysis_list_html(request):
 @login_required
 def analysis_create_html(request):
     result = None
+    error = None
 
     if request.method == "POST":
         analysis_type = request.POST.get("type")
@@ -76,7 +77,11 @@ def analysis_create_html(request):
         }
 
         if analysis_type not in mapping:
-            return render(request, "analysis/analysis_create.html", {"error": "유효하지 않은 타입"})
+            return render(
+                request,
+                "analysis/analysis_create.html",
+                {"error": "유효하지 않은 타입"}
+            )
 
         start, end = mapping[analysis_type]()
 
@@ -90,9 +95,15 @@ def analysis_create_html(request):
             graph_type=graph_type,
         )
 
-        result = analyzer.run()  # 분석 생성 + 이미지 저장
+        try:
+            result = analyzer.run()
+        except ValueError as e:
+            error = str(e)
 
-    return render(request, "analysis/analysis_create.html", {"result": result})
+    return render(request, "analysis/analysis_create.html", {
+        "result": result,
+        "error": error,
+    })
 
 
 

@@ -2,22 +2,23 @@
 {% block content %}
 {% load humanize %}
 
-<h2>📊 분석 결과 조회</h2>
+<h2 class="mb-4">📊 분석 결과 조회</h2>
 
-<div class="btn-group my-3">
-    <a href="?period=DAILY" class="btn btn-primary">오늘</a>
-    <a href="?period=LAST_DAY" class="btn btn-outline-primary">어제</a>
-    <a href="?period=WEEKLY" class="btn btn-primary">이번주</a>
-    <a href="?period=LAST_WEEK" class="btn btn-outline-primary">지난주</a>
-    <a href="?period=MONTHLY" class="btn btn-primary">이번달</a>
-    <a href="?period=LAST_MONTH" class="btn btn-outline-primary">지난달</a>
-    <a href="?period=YEARLY" class="btn btn-primary">올해</a>
-    <a href="?period=LAST_YEAR" class="btn btn-outline-primary">작년</a>
+<!-- 기간 필터 버튼 그룹 -->
+<div class="d-flex flex-wrap gap-2 mb-4">
+    <a href="?period=DAILY"       class="btn btn-outline-primary">오늘</a>
+    <a href="?period=LAST_DAY"    class="btn btn-outline-secondary">어제</a>
+    <a href="?period=WEEKLY"      class="btn btn-outline-primary">이번주</a>
+    <a href="?period=LAST_WEEK"   class="btn btn-outline-secondary">지난주</a>
+    <a href="?period=MONTHLY"     class="btn btn-outline-primary">이번달</a>
+    <a href="?period=LAST_MONTH"  class="btn btn-outline-secondary">지난달</a>
+    <a href="?period=YEARLY"      class="btn btn-outline-primary">올해</a>
+    <a href="?period=LAST_YEAR"   class="btn btn-outline-secondary">작년</a>
 </div>
 
 <hr>
 
-<h4>🔍조회 결과</h4>
+<h4 class="mb-3">🔍 조회 결과</h4>
 
 {% if analyses %}
 <div class="row">
@@ -25,44 +26,47 @@
     <div class="col-md-4 mb-4">
 
         <!-- 카드 UI -->
-        <div class="card shadow-sm">
+        <div class="card shadow-sm h-100">
 
-            <!-- 그래프 이미지 -->
             {% if item.result_image %}
-                <img src="{{ item.result_image.url }}"
-                     class="card-img-top img-thumbnail"
-                     style="cursor: pointer;"
-                     data-bs-toggle="modal"
-                     data-bs-target="#imageModal{{ item.id }}">
+            <img src="{{ item.result_image.url }}"
+                 class="card-img-top"
+                 style="cursor:pointer;"
+                 data-bs-toggle="modal"
+                 data-bs-target="#imageModal{{ item.id }}">
             {% endif %}
 
             <div class="card-body">
                 <h5 class="card-title">{{ item.get_about_display }}</h5>
-                <p class="card-text text-muted">{{ item.period_start }} ~ {{ item.period_end }}</p>
+                <p class="text-muted small">{{ item.period_start }} ~ {{ item.period_end }}</p>
 
-                <p class="mb-1">총 수입: <strong>{{ item.total_income|intcomma  }}</strong> 원</p>
-                <p class="mb-1">총 지출: <strong>{{ item.total_spending|intcomma  }}</strong> 원</p>
+                <p class="mb-1">총 수입:
+                    <strong>{{ item.total_income|intcomma }}</strong> 원
+                </p>
+                <p class="mb-1">총 지출:
+                    <strong>{{ item.total_spending|intcomma }}</strong> 원
+                </p>
                 <p class="mb-1">
                     차액:
                     <strong class="{% if item.difference < 0 %}text-danger{% else %}text-success{% endif %}">
-                        {{ item.difference|intcomma  }}
+                        {{ item.difference|intcomma }}
                     </strong> 원
                 </p>
             </div>
         </div>
 
-        <!-- 그래프 크게 보기 -->
+        <!-- Modal 이미지 확대 -->
         <div class="modal fade" id="imageModal{{ item.id }}" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-              <div class="modal-body p-0">
-                <img src="{{ item.result_image.url }}" class="img-fluid w-100">
-              </div>
-              <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-              </div>
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body p-0">
+                        <img src="{{ item.result_image.url }}" class="img-fluid w-100">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
 
     </div>
